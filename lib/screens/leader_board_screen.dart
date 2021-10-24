@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:the_dice_game/app_themes/export_themes.dart';
 import 'package:the_dice_game/constants/app_strings.dart';
+import 'package:the_dice_game/firebase/firebase_utility.dart';
+import 'package:the_dice_game/models/game_record.dart';
 import 'package:the_dice_game/utilities/export_utilities.dart';
+
+Future<List<GameRecord>> getData() async {
+  List<GameRecord> records = await FirebaseUtility.getLeaderboardRecords();
+  print(records.length);
+  return records;
+}
 
 class LeaderboardScreen extends StatelessWidget {
   @override
@@ -24,16 +32,31 @@ class LeaderboardScreen extends StatelessWidget {
               text3: AppStrings.score,
             ),
             Expanded(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: 30,
-                itemBuilder: (_, index) => TextRowWidget(
-                  text1: '${index + 1}',
-                  bgColor: AppColors.primaryColor.withOpacity(.25),
-                  textColor: Colors.black,
-                  text2: 'X',
-                  text3: '0',
-                ),
+              child: FutureBuilder(
+                initialData: getData(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    print(snapshot.data);
+
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (_, index) {
+                        GameRecord record =
+                            GameRecord.fromJson(snapshot.data[index]);
+
+                        return TextRowWidget(
+                          text1: '${index + 1}',
+                          bgColor: AppColors.primaryColor.withOpacity(.25),
+                          textColor: Colors.black,
+                          text2: record.username,
+                          text3: record.points,
+                        );
+                      },
+                    );
+                  }
+                  return Center(child: CustomProgressIndicator());
+                },
               ),
             )
           ],

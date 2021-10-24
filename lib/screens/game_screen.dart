@@ -3,59 +3,67 @@ import 'package:the_dice_game/app_themes/app_dimensions.dart';
 import 'package:the_dice_game/app_themes/app_text_styles.dart';
 import 'package:the_dice_game/app_themes/export_themes.dart';
 import 'package:the_dice_game/constants/app_strings.dart';
+import 'package:the_dice_game/scoped_model/game_model.dart';
 import 'package:the_dice_game/utilities/export_utilities.dart';
 import 'package:the_dice_game/utilities/reusable_widgets.dart';
 
 class GameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: WillPopScope(
-        onWillPop: () async {
-          GlobalUtils.dismissibleDialog(
-            context: context,
-            dialogHeight: SizeConfig.deviceHeight * 40,
-            child: ExitGameDialog(),
-          );
-          return false;
-        },
-        child: Scaffold(
-          body: Column(
-            children: [
-              SizedBox(
-                height: SizeConfig.deviceHeight * 10,
+    return BaseView<GameModel>(
+      builder: (context, child, model) {
+        return SafeArea(
+          child: WillPopScope(
+            onWillPop: () async {
+              GlobalUtils.dismissibleDialog(
+                context: context,
+                dialogHeight: SizeConfig.deviceHeight * 40,
+                child: ExitGameDialog(),
+              );
+              return false;
+            },
+            child: Scaffold(
+              body: Column(
+                children: [
+                  SizedBox(
+                    height: SizeConfig.deviceHeight * 10,
+                  ),
+                  Center(
+                    child: Text(
+                      'You have scored ${model.points == null ? '' : model.points} point so far!!',
+                      style: AppTextStyles.boldTextStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  SizedBox(
+                    height: SizeConfig.deviceHeight * 10,
+                  ),
+                  DiceWidget(
+                    number: model.number,
+                  ),
+                  SizedBox(
+                    height: SizeConfig.deviceHeight * 10,
+                  ),
+                  Center(
+                    child: Text(
+                      '${model.turns == null ? 0 : model.turns}/10',
+                      style: AppTextStyles.boldTextStyle,
+                    ),
+                  ),
+                  SizedBox(
+                    height: SizeConfig.deviceHeight * 10,
+                  ),
+                  CustomRoundedButton(
+                    label: AppStrings.roll,
+                    onPressed: () => model.roll(context),
+                    width: SizeConfig.deviceWidth * 30,
+                  )
+                ],
               ),
-              Center(
-                  child: Text(
-                'You have scored X point so far!!',
-                style: AppTextStyles.boldTextStyle,
-              )),
-              SizedBox(
-                height: SizeConfig.deviceHeight * 10,
-              ),
-              DiceWidget(
-                number: 6,
-              ),
-              SizedBox(
-                height: SizeConfig.deviceHeight * 10,
-              ),
-              Center(
-                child: Text(
-                  '0/10',
-                  style: AppTextStyles.boldTextStyle,
-                ),
-              ),
-              SizedBox(
-                height: SizeConfig.deviceHeight * 10,
-              ),
-              CustomRoundedButton(
-                label: AppStrings.roll,
-                width: SizeConfig.deviceWidth * 30,
-              )
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -71,7 +79,7 @@ class ExitGameDialog extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Text(
-          AppStrings.areYouSure,
+          AppStrings.areYouSure1,
           style: AppTextStyles.mediumTextStyle,
         ),
         Column(
@@ -85,7 +93,6 @@ class ExitGameDialog extends StatelessWidget {
             DialogButton(
               label: AppStrings.continueText,
             ),
-
           ],
         ),
       ],
@@ -103,22 +110,34 @@ class DiceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: SizeConfig.deviceWidth * 40,
-      height: SizeConfig.deviceWidth * 40,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusLarge),
-        border: Border.all(
-          color: AppColors.secondaryColor,
-          width: 4,
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: _widgetByNumber(number),
-      ),
-    );
+    return number == null
+        ? Container(
+            width: SizeConfig.deviceWidth * 90,
+            height: SizeConfig.deviceWidth * 40,
+            child: Center(
+              child: Text(
+                AppStrings.rollOn,
+                style: AppTextStyles.largeTextStyle,
+              ),
+            ),
+          )
+        : Container(
+            width: SizeConfig.deviceWidth * 40,
+            height: SizeConfig.deviceWidth * 40,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius:
+                  BorderRadius.circular(AppDimensions.borderRadiusLarge),
+              border: Border.all(
+                color: AppColors.secondaryColor,
+                width: 4,
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: _widgetByNumber(number),
+            ),
+          );
   }
 
   Icon _dotWidget() {

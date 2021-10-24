@@ -3,6 +3,10 @@ import 'package:the_dice_game/app_themes/app_dimensions.dart';
 import 'package:the_dice_game/utilities/export_utilities.dart';
 
 class GlobalUtils {
+  static String getTextFromController(TextEditingController controller) {
+    return controller.text.trim();
+  }
+
   static navigateTo({BuildContext context, Widget screen}) {
     Navigator.push(
       context,

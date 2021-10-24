@@ -1,31 +1,39 @@
 import 'package:the_dice_game/constants/app_constants.dart';
 
 class SharedPreferencesUtility {
-  Future<void> setData(String key, String value) async {
+  static setString(String key, String value) {
     Constants.preferences.setString(key, value);
   }
 
-  Future<void> setBool(String key, bool value) async {
+  static setInt(String key, int value) {
+    Constants.preferences.setInt(key, value);
+  }
+
+  static getInt(String key) {
+    Constants.preferences.getInt(key);
+  }
+
+  static setBool(String key, bool value) {
     Constants.preferences.setBool(key, value);
   }
 
-  Future<bool> getBool(String key) async {
-    return Constants.preferences.getBool(key);
+  static getBool(String key) {
+    return Constants.preferences.getBool(key) ?? false;
   }
 
-  Future<String> getData(String key) async {
+  static getData(String key) {
     return Constants.preferences.getString(key);
   }
 
-  Future<void> setList(String key, List<String> value) async {
+  static setList(String key, List<String> value) {
     Constants.preferences.setStringList(key, value);
   }
 
-  Future<List<String>> getList(String key) async {
+  static getList(String key) {
     return Constants.preferences.getStringList(key);
   }
 
-  Future<void> clear() async {
+  static clear() {
     Constants.preferences.clear();
   }
 }
