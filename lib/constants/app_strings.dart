@@ -20,7 +20,7 @@ class AppStrings {
   static const String areYouSure = 'Are you sure you want to exit this game?';
   static const String exit = 'Exit';
   static const String saveAndExit = 'Save And Exit';
-static const String  continueText= 'Continue';
+  static const String continueText = 'Continue';
 // static const String  = '';
 // static const String  = '';
 // static const String  = '';

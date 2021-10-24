@@ -16,25 +16,27 @@ class AuthCommonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: SizeConfig.deviceHeight * 10,
-            ),
-            Center(
-              child: Text(
-                '$title',
-                style: AppTextStyles.boldTextStyle.copyWith(
-                  fontSize: SizeConfig.deviceHeight * 4,
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: SizeConfig.deviceHeight * 10,
+              ),
+              Center(
+                child: Text(
+                  '$title',
+                  style: AppTextStyles.boldTextStyle.copyWith(
+                    fontSize: SizeConfig.deviceHeight * 4,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: SizeConfig.deviceHeight * 10,
-            ),
-            bottomWidget
-          ],
+              SizedBox(
+                height: SizeConfig.deviceHeight * 10,
+              ),
+              bottomWidget
+            ],
+          ),
         ),
       ),
     );

@@ -17,7 +17,7 @@ class CustomRoundedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return GestureDetector(
       onTap: onPressed,
       child: Container(
         width: width ?? double.maxFinite,
@@ -111,6 +111,21 @@ class CustomUnderlineButton extends StatelessWidget {
           fontWeight: FontWeight.bold,
           decoration: TextDecoration.underline,
         ),
+      ),
+    );
+  }
+}
+
+class CustomProgressIndicator extends StatelessWidget {
+  const CustomProgressIndicator({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return CircularProgressIndicator(
+      valueColor: AlwaysStoppedAnimation<Color>(
+        AppColors.primaryColor,
       ),
     );
   }
