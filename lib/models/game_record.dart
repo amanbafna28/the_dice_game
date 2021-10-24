@@ -4,6 +4,13 @@
 
 import 'dart:convert';
 
+
+List<GameRecord> gameRecordListFromJson(String str) =>
+    List<GameRecord>.from(json.decode(str).map((x) => GameRecord.fromJson(x)));
+
+String gameRecordListToJson(List<GameRecord> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
 GameRecord gameRecordFromJson(String str) =>
     GameRecord.fromJson(json.decode(str));
 

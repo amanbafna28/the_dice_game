@@ -15,3 +15,7 @@ For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+Offline first Dice Game which gives user 10 chances to maximize their total score
+- User can save game in between and exit
+- Login and Register and Logout functionality
+- Leaderboards screen

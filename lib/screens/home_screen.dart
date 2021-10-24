@@ -3,6 +3,7 @@ import 'package:the_dice_game/app_themes/export_themes.dart';
 import 'package:the_dice_game/constants/app_strings.dart';
 import 'package:the_dice_game/constants/export_constants.dart';
 import 'package:the_dice_game/screens/game_screen.dart';
+import 'package:the_dice_game/screens/leader_board_screen.dart';
 import 'package:the_dice_game/screens/onboarding_screen.dart';
 import 'package:the_dice_game/utilities/export_utilities.dart';
 import 'package:the_dice_game/utilities/shared_prefs_utility.dart';
@@ -40,18 +41,31 @@ class HomeScreen extends StatelessWidget {
             SizedBox(
               height: SizeConfig.deviceHeight * 20,
             ),
-            SharedPreferencesUtility.getBool(Constants.isGameOver)
+            SharedPreferencesUtility.getBool(Constants.isGameOver) == null ||
+                    SharedPreferencesUtility.getBool(Constants.isGameOver)
                 ? SizedBox.shrink()
                 : CustomRoundedButton(
                     label: AppStrings.continueOld,
+                    onPressed: () {
+                      GlobalUtils.navigateAndRemoveUntil(
+                        context: context,
+                        screen: GameScreen(
+                          isPreviousGame: true,
+                        ),
+                      );
+                    },
                   ),
             CustomRoundedButton(
               label: AppStrings.newGame,
               onPressed: () {
-                if (SharedPreferencesUtility.getBool(Constants.isGameOver)) {
+                if (SharedPreferencesUtility.getBool(Constants.isGameOver) ==
+                        null ||
+                    SharedPreferencesUtility.getBool(Constants.isGameOver)) {
                   GlobalUtils.navigateAndRemoveUntil(
                     context: context,
-                    screen: GameScreen(),
+                    screen: GameScreen(
+                      isPreviousGame: false,
+                    ),
                   );
                 } else {
                   GlobalUtils.dismissibleDialog(
@@ -64,6 +78,10 @@ class HomeScreen extends StatelessWidget {
             ),
             CustomRoundedButton(
               label: AppStrings.leaderboards,
+              onPressed: () {
+                GlobalUtils.navigateTo(
+                    context: context, screen: LeaderboardScreen());
+              },
             ),
             CustomRoundedButton(
               label: AppStrings.logout,
@@ -103,7 +121,9 @@ class NewGameDialog extends StatelessWidget {
                 SharedPreferencesUtility.setBool(Constants.isGameOver, true);
                 GlobalUtils.navigateAndRemoveUntil(
                   context: context,
-                  screen: GameScreen(),
+                  screen: GameScreen(
+                    isPreviousGame: false,
+                  ),
                 );
               },
             ),

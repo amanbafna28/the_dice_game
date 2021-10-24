@@ -1,68 +1,90 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:the_dice_game/app_themes/export_themes.dart';
+import 'package:the_dice_game/constants/app_constants.dart';
 import 'package:the_dice_game/constants/app_strings.dart';
 import 'package:the_dice_game/firebase/firebase_utility.dart';
 import 'package:the_dice_game/models/game_record.dart';
 import 'package:the_dice_game/utilities/export_utilities.dart';
+import 'package:the_dice_game/utilities/shared_prefs_utility.dart';
 
-Future<List<GameRecord>> getData() async {
-  List<GameRecord> records = await FirebaseUtility.getLeaderboardRecords();
-  print(records.length);
-  return records;
+class LeaderboardScreen extends StatefulWidget {
+  @override
+  _LeaderboardScreenState createState() => _LeaderboardScreenState();
 }
 
-class LeaderboardScreen extends StatelessWidget {
+class _LeaderboardScreenState extends State<LeaderboardScreen> {
+  List<GameRecord> records;
+
+  @override
+  void initState() {
+    _getData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Column(
-          children: [
-            Center(
-              child: Text(
-                AppStrings.leaderboards,
-                style: AppTextStyles.boldTextStyle.copyWith(
-                  fontSize: SizeConfig.deviceHeight * 4,
-                ),
-              ),
-            ),
-            TextRowWidget(
-              text1: AppStrings.srNo,
-              text2: AppStrings.name,
-              text3: AppStrings.score,
-            ),
-            Expanded(
-              child: FutureBuilder(
-                initialData: getData(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    print(snapshot.data);
-
-                    return ListView.builder(
+        body: records == null
+            ? Center(
+                child: CustomProgressIndicator(),
+              )
+            : Column(
+                children: [
+                  Center(
+                    child: Text(
+                      AppStrings.leaderboards,
+                      style: AppTextStyles.boldTextStyle.copyWith(
+                        fontSize: SizeConfig.deviceHeight * 4,
+                      ),
+                    ),
+                  ),
+                  TextRowWidget(
+                    text1: AppStrings.srNo,
+                    text2: AppStrings.name,
+                    text3: AppStrings.score,
+                  ),
+                  Expanded(
+                    child: ListView.builder(
                       shrinkWrap: true,
-                      itemCount: snapshot.data.length,
+                      itemCount: records.length,
                       itemBuilder: (_, index) {
-                        GameRecord record =
-                            GameRecord.fromJson(snapshot.data[index]);
-
                         return TextRowWidget(
                           text1: '${index + 1}',
-                          bgColor: AppColors.primaryColor.withOpacity(.25),
+                          bgColor: AppColors.primaryColor.withOpacity(.2),
                           textColor: Colors.black,
-                          text2: record.username,
-                          text3: record.points,
+                          text2: records[index].username,
+                          text3: records[index].points,
                         );
                       },
-                    );
-                  }
-                  return Center(child: CustomProgressIndicator());
-                },
+                    ),
+                  )
+                ],
               ),
-            )
-          ],
-        ),
       ),
     );
+  }
+
+  Future<void> _getData() async {
+    ConnectivityResult result = await Connectivity().checkConnectivity();
+    if (result == ConnectivityResult.none) {
+      String cachedRecords =
+          SharedPreferencesUtility.getData(Constants.leaderBoardRecords);
+
+      if (cachedRecords == null) {
+        records = [];
+      } else {
+        records = gameRecordListFromJson(cachedRecords);
+      }
+    } else {
+      records = await FirebaseUtility.getLeaderboardRecords();
+      SharedPreferencesUtility.setString(
+          Constants.leaderBoardRecords, gameRecordListToJson(records));
+    }
+    records.sort((a, b) => b.points.compareTo(a.points));
+    setState(() {});
   }
 }
 
@@ -86,6 +108,9 @@ class TextRowWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: bgColor ?? AppColors.secondaryColor,
+      margin: EdgeInsets.symmetric(
+        vertical: SizeConfig.deviceHeight * .25,
+      ),
       padding: EdgeInsets.symmetric(
         vertical: SizeConfig.deviceHeight * 1,
         horizontal: AppDimensions.standardHorizontalSmallPadding,

@@ -9,8 +9,8 @@ class SharedPreferencesUtility {
     Constants.preferences.setInt(key, value);
   }
 
-  static getInt(String key) {
-    Constants.preferences.getInt(key);
+  static int getInt(String key) {
+    return Constants.preferences.getInt(key);
   }
 
   static setBool(String key, bool value) {
@@ -18,7 +18,11 @@ class SharedPreferencesUtility {
   }
 
   static getBool(String key) {
-    return Constants.preferences.getBool(key) ?? false;
+    if (key == Constants.isUserLoggedIn) {
+      return Constants.preferences.getBool(key) ?? false;
+    } else {
+      return Constants.preferences.getBool(key);
+    }
   }
 
   static getData(String key) {

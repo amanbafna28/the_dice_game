@@ -8,4 +8,7 @@ class Constants {
   static const String points = 'POINTS';
   static const String turns = 'TURNS';
   static const String isGameOver = 'IS_GAME_OVER';
+  static const String latestNumber = 'LATEST_NUMBER';
+  static const String leaderBoardRecords = 'RECORDS';
+  static const String unSavedRecords = 'UNSAVED_RECORDS';
 }

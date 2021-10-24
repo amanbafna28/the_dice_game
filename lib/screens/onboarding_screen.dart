@@ -1,8 +1,10 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:the_dice_game/app_themes/export_themes.dart';
 import 'package:the_dice_game/constants/app_constants.dart';
 import 'package:the_dice_game/constants/app_strings.dart';
 import 'package:the_dice_game/firebase/firebase_utility.dart';
+import 'package:the_dice_game/models/game_record.dart';
 import 'package:the_dice_game/models/user_info.dart';
 import 'package:the_dice_game/screens/home_screen.dart';
 import 'package:the_dice_game/screens/leader_board_screen.dart';
@@ -22,15 +24,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   void initState() {
-    isUserLoggedIn = SharedPreferencesUtility.getBool(Constants.isUserLoggedIn);
-    if (isUserLoggedIn) {
-      Future(
-        () => GlobalUtils.navigateAndRemoveUntil(
-          context: context,
-          screen: HomeScreen(),
-        ),
-      );
-    }
+    _initData();
     super.initState();
   }
 
@@ -76,7 +70,34 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               );
   }
 
-  void _getData() {
-    FirebaseUtility.getLeaderboardRecords().then((value) => print(value));
+  Future<void> _initData() async {
+    String cachedUnsavedRecords =
+        SharedPreferencesUtility.getData(Constants.unSavedRecords);
+
+    print('cachedUnsavedRecords $cachedUnsavedRecords');
+    List<GameRecord> unSavedRecords = [];
+    if (cachedUnsavedRecords != null) {
+      print('1');
+      unSavedRecords = gameRecordListFromJson(cachedUnsavedRecords);
+
+      ConnectivityResult result = await Connectivity().checkConnectivity();
+
+      if (result != ConnectivityResult.none) {
+        unSavedRecords.forEach((element) {
+          print(element.toJson());
+          FirebaseUtility.addGameRecord(gameRecord: element);
+        });
+        SharedPreferencesUtility.setString(Constants.unSavedRecords, null);
+      }
+    }
+    isUserLoggedIn = SharedPreferencesUtility.getBool(Constants.isUserLoggedIn);
+    if (isUserLoggedIn) {
+      Future(
+        () => GlobalUtils.navigateAndRemoveUntil(
+          context: context,
+          screen: HomeScreen(),
+        ),
+      );
+    }
   }
 }

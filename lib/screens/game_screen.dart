@@ -3,15 +3,24 @@ import 'package:the_dice_game/app_themes/app_dimensions.dart';
 import 'package:the_dice_game/app_themes/app_text_styles.dart';
 import 'package:the_dice_game/app_themes/export_themes.dart';
 import 'package:the_dice_game/constants/app_strings.dart';
+import 'package:the_dice_game/constants/export_constants.dart';
 import 'package:the_dice_game/scoped_model/game_model.dart';
+import 'package:the_dice_game/screens/home_screen.dart';
 import 'package:the_dice_game/utilities/export_utilities.dart';
 import 'package:the_dice_game/utilities/reusable_widgets.dart';
+import 'package:the_dice_game/utilities/shared_prefs_utility.dart';
 
 class GameScreen extends StatelessWidget {
+  final bool isPreviousGame;
+
+  const GameScreen({Key key, this.isPreviousGame}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return BaseView<GameModel>(
       builder: (context, child, model) {
+        model.isPreviousGame = isPreviousGame;
+
         return SafeArea(
           child: WillPopScope(
             onWillPop: () async {
@@ -46,7 +55,7 @@ class GameScreen extends StatelessWidget {
                   ),
                   Center(
                     child: Text(
-                      '${model.turns == null ? 0 : model.turns}/10',
+                      '${model.turns == null ? 0 : model.turns}/10 turns',
                       style: AppTextStyles.boldTextStyle,
                     ),
                   ),
@@ -86,12 +95,26 @@ class ExitGameDialog extends StatelessWidget {
           children: [
             DialogButton(
               label: AppStrings.exit,
+              onPressed: () {
+                SharedPreferencesUtility.setBool(Constants.isGameOver, true);
+                GlobalUtils.navigateAndRemoveUntil(
+                  context: context,
+                  screen: HomeScreen(),
+                );
+              },
             ),
             DialogButton(
+              onPressed: () {
+                GlobalUtils.navigateAndRemoveUntil(
+                  context: context,
+                  screen: HomeScreen(),
+                );
+              },
               label: AppStrings.saveAndExit,
             ),
             DialogButton(
               label: AppStrings.continueText,
+              onPressed: () => Navigator.pop(context),
             ),
           ],
         ),
