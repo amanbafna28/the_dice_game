@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:the_dice_game/constants/app_strings.dart';
+import 'package:the_dice_game/screens/home_screen.dart';
 import 'package:the_dice_game/screens/register_screen.dart';
 import 'package:the_dice_game/utilities/export_utilities.dart';
 
@@ -23,6 +24,10 @@ class LoginScreen extends StatelessWidget {
           ),
           CustomRoundedButton(
             label: AppStrings.login,
+            onPressed: () => GlobalUtils.navigateAndRemoveUntil(
+              context: context,
+              screen: AppHomeScreen(),
+            ),
           ),
           SizedBox(
             height: SizeConfig.deviceHeight * 10,

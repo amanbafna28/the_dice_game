@@ -12,7 +12,7 @@ class AppTextStyles {
       TextStyle(fontSize: SizeConfig.deviceHeight * 2.25);
 
   static TextStyle boldTextStyle = TextStyle(
-    fontSize: SizeConfig.deviceHeight * 2,
+    fontSize: SizeConfig.deviceHeight * 2.5,
     fontWeight: FontWeight.bold,
   );
 }
