@@ -1,14 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:package_info/package_info.dart';
 import 'package:the_dice_game/app_themes/export_themes.dart';
 import 'package:the_dice_game/constants/app_strings.dart';
 import 'package:the_dice_game/constants/export_constants.dart';
+import 'package:the_dice_game/models/user_info.dart';
 import 'package:the_dice_game/screens/game_screen.dart';
 import 'package:the_dice_game/screens/leader_board_screen.dart';
 import 'package:the_dice_game/screens/onboarding_screen.dart';
 import 'package:the_dice_game/utilities/export_utilities.dart';
 import 'package:the_dice_game/utilities/shared_prefs_utility.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String version = '';
+
+  @override
+  void initState() {
+    PackageInfo.fromPlatform().then((value) {
+      version = value.version;
+      setState(() {});
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -29,7 +47,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${AppStrings.appVersion}\n1.0.1',
+                    '${AppStrings.appVersion}\n$version',
                     style: AppTextStyles.boldTextStyle.copyWith(
                       fontSize: SizeConfig.deviceHeight * 1.75,
                     ),
